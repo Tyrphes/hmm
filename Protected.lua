@@ -1,7 +1,7 @@
 local Kavo = {}
 
 local tween = game:GetService("TweenService")
-local tweeninfo = TweenInfo.new
+
 local input = game:GetService("UserInputService")
 local run = game:GetService("RunService")
 
@@ -43,8 +43,9 @@ function Kavo:DraggingEnabled(frame, parent)
 	end)
 end
 
+
 function Utility:TweenObject(obj, properties, duration, ...)
-	tween:Create(obj, tweeninfo(duration, ...), properties):Play()
+	tween:Create(obj, TweenInfo.new(duration, ...), properties):Play()
 end
 
 
