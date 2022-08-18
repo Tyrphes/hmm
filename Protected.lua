@@ -1,7 +1,7 @@
 local Kavo = {}
-
+Kavo._index = Kavo
 local tween = game:GetService("TweenService")
-
+local tweeninfo = TweenInfo.new
 local input = game:GetService("UserInputService")
 local run = game:GetService("RunService")
 
@@ -43,9 +43,8 @@ function Kavo:DraggingEnabled(frame, parent)
 	end)
 end
 
-
 function Utility:TweenObject(obj, properties, duration, ...)
-	tween:Create(obj, TweenInfo.new(duration, ...), properties):Play()
+	tween:Create(obj, tweeninfo(duration, ...), properties):Play()
 end
 
 
@@ -200,12 +199,13 @@ function Kavo.CreateLib(kavName, themeList)
 	local pages = Instance.new("Frame")
 	local Pages = Instance.new("Folder")
 	local infoContainer = Instance.new("Frame")
-	
+	local CloseEvent = Instance.new("BindableEvent")
 	local blurFrame = Instance.new("Frame")
 	local Stuff = Instance.new("Frame")
+	local Elements = {}
 	
 	Kavo:DraggingEnabled(MainHeader, Main)
-	
+
 	blurFrame.Name = "blurFrame"
 	blurFrame.Parent = pages
 	blurFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -277,6 +277,7 @@ function Kavo.CreateLib(kavName, themeList)
 	close.Text = "X"
 	close.TextColor3 = Color3.new(1,1,1)
 	close.MouseButton1Click:Connect(function()
+		CloseEvent:Fire()
 		game.TweenService:Create(close, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
 			TextTransparency = 1
 		}):Play()
@@ -300,7 +301,7 @@ function Kavo.CreateLib(kavName, themeList)
 			Main.Transparency = 1
 			game.TweenService:Create(Stuff, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				Size = UDim2.new(0,0,0,0),
-				
+
 			}):Play()
 		else
 			Main.Transparency = 0
@@ -387,7 +388,12 @@ function Kavo.CreateLib(kavName, themeList)
 	local Tabs = {}
 
 	local first = true
-
+	function Tabs.Close()
+		local self = setmetatable({
+			Closing = CloseEvent.Event;
+		}, Tabs)
+		return self
+	end
 	function Tabs:NewTab(tabName)
 		tabName = tabName or "Tab"
 		local tabButton = Instance.new("TextButton")
@@ -427,7 +433,7 @@ function Kavo.CreateLib(kavName, themeList)
 		tabButton.AutoButtonColor = false
 		tabButton.Font = Enum.Font.Gotham
 		tabButton.Text = tabName
-		
+
 		tabButton.TextColor3 = themeList.TextColor
 		Objects[tabButton] = "TextColor3"
 		tabButton.TextSize = 14.000
@@ -593,6 +599,7 @@ function Kavo.CreateLib(kavName, themeList)
 			updateSectionFrame()
 			UpdateSize()
 			local Elements = {}
+			
 			function Elements:NewButton(bname,tipINf, callback)
 				showLogo = showLogo or true
 				local ButtonFunction = {}
@@ -795,7 +802,7 @@ function Kavo.CreateLib(kavName, themeList)
 			end
 
 			function Elements:NewTextBox(tname, tTip, callback)
-				
+
 				tname = tname or "Textbox"
 				tTip = tTip or "Gets a value of Textbox"
 				callback = callback or function() end
@@ -2656,6 +2663,7 @@ function Kavo.CreateLib(kavName, themeList)
 				end	
 				return labelFunctions
 			end	
+			
 			return Elements
 		end
 		return Sections
